@@ -4,25 +4,16 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class EmployeeRepository {
 
-    private final List<Employee> employees = List.of(
-            createEmployee(1L, "John"),
-            createEmployee(2L, "Jane"),
-            createEmployee(3L, "Alice"),
-            createEmployee(4L, "Bob")
-    );
+    private final AtomicLong sequenceGenerator = new AtomicLong(0);
 
-    private Employee createEmployee(Long id, String name) {
-        Employee employee = new Employee();
-        employee.setId(id);
-        employee.setName(name);
-        return employee;
-    }
-
+    private final List<Employee> employees = new ArrayList<>();
     public Flux<Employee> findAll() {
         return Flux.fromIterable(employees);
     }
@@ -31,5 +22,24 @@ public class EmployeeRepository {
         return Flux.fromIterable(employees)
                 .filter(e -> e.getId().equals(id))
                 .singleOrEmpty();
+    }
+
+    public Mono<Employee> save(Employee employee){
+        if(employee.getId() == null){
+            Employee newEmployee = new Employee(sequenceGenerator.incrementAndGet(), employee.getName());
+            employees.add(newEmployee);
+            return Mono.just(newEmployee);
+        } else {
+            return findById(employee.getId())
+                    //Ez eléggés side effect - soha de soha ne  tegyük ezt
+                    //Stream-eknél ezért nem ajálnja a peek-et
+                    //employees.stream().peek(e -> e.setName("TEST")).count();
+                    .doOnNext(
+                            existingEmployee -> existingEmployee.setName(employee.getName())
+                    )
+                    .map(
+                            e -> new Employee(e.getId(), e.getName()
+                    ));
+        }
     }
 }
