@@ -1,4 +1,11 @@
-### GET request to example server
+### Hello
 GET http://localhost:8080/hello
+
+### Get All Employees
+GET http://localhost:8080/employees
+
+### Get Employee by ID
+@employeeId = 1
+GET http://localhost:8080/employees/{{employeeId}}
 
 ###
