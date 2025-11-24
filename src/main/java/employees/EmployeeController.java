@@ -2,10 +2,7 @@ package employees;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +11,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class EmployeeController {
 
-    private final  EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     @GetMapping
     public Flux<EmployeeDto> findAll() {
@@ -26,6 +23,23 @@ public class EmployeeController {
         return employeeService
                 .findById(id)
                 .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public Mono<EmployeeDto> createEmployee(@RequestBody Mono<EmployeeDto> employeeDto) {
+        return employeeService.save(employeeDto);
+    }
+
+    @PutMapping("/{id}")
+    public Mono<EmployeeDto> createEmployee(@PathVariable Long id,@RequestBody Mono<EmployeeDto> employeeDto) {
+        return employeeService.save(employeeDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteEmployee(@PathVariable Long id) {
+        return employeeService.deleteById(id)
+                .then(Mono.just(ResponseEntity.noContent().<Void>build()))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

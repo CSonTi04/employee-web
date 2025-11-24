@@ -42,4 +42,13 @@ public class EmployeeRepository {
                     ));
         }
     }
+
+    public Mono<Void> deleteById(long id){
+        boolean success = employees.removeIf(employee -> employee.getId().equals(id));
+        if(success){
+            return Mono.empty();
+        } else {
+            return Mono.error(new IllegalArgumentException("Employee not found with id: " + id));
+        }
+    }
 }
