@@ -8,4 +8,8 @@ GET http://localhost:8080/employees
 @employeeId = 1
 GET http://localhost:8080/employees/{{employeeId}}
 
+### Get Employee by ID - Not Found
+employeeId = 999
+GET http://localhost:8080/employees/{{employeeId}}
+
 ###
