@@ -1,6 +1,7 @@
 package employees;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -50,7 +51,9 @@ public class EmployeeController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    //Ennek idempotensnek kellene lennie
     @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public Mono<ResponseEntity<Void>> deleteEmployee(@PathVariable Long id) {
         return employeeService.deleteById(id)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()))
