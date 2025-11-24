@@ -6,11 +6,11 @@ GET http://localhost:8080/api/employees
 
 ### Get Employee by ID
 @employeeId = 1
-GET http://localhost:8080/api/employees/{{employeeIdUnkown}}
+GET http://localhost:8080/api/employees/{{employeeId}}
 
 ### Get Employee by ID - Not Found
-@employeeIdUnkown = 999
-GET http://localhost:8080/api/employees/{{employeeIdUnkown}}
+@employeeIdUnknown = 999
+GET http://localhost:8080/api/employees/{{employeeIdUnknown}}
 
 ### Create New Employee
 POST http://localhost:8080/api/employees
