@@ -1,5 +1,6 @@
 package employees;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class EmployeeController {
     //Created-nél szükséges a helyes URI visszaadása
     @PostMapping
     public Mono<ResponseEntity<EmployeeDto>> createEmployee(
-            @RequestBody Mono<EmployeeDto> employeeDto,
+            @Valid @RequestBody Mono<EmployeeDto> employeeDto,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         return employeeService
@@ -40,7 +41,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<EmployeeDto>> createEmployee(@PathVariable Long id, @RequestBody Mono<EmployeeDto> employeeDto) {
+    public Mono<ResponseEntity<EmployeeDto>> createEmployee(@PathVariable Long id, @Valid @RequestBody Mono<EmployeeDto> employeeDto) {
         return employeeDto
                 .filter(e -> e.id() != null && e.id().equals(id))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Employee with id " + id + " not found")))
