@@ -3,6 +3,7 @@ package employees;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,8 +28,13 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Mono<EmployeeDto> createEmployee(@RequestBody Mono<EmployeeDto> employeeDto) {
-        return employeeService.save(employeeDto);
+    public Mono<ResponseEntity<EmployeeDto>> createEmployee(
+            @RequestBody Mono<EmployeeDto> employeeDto,
+            UriComponentsBuilder uriComponentsBuilder
+            ) {
+        return employeeService
+                .save(employeeDto)
+                .map(e -> ResponseEntity.created(uriComponentsBuilder.path("api/employees/{id}").buildAndExpand(e.id()).toUri()).body(e));
     }
 
     @PutMapping("/{id}")
