@@ -2,14 +2,32 @@
 GET http://localhost:8080/hello
 
 ### Get All Employees
-GET http://localhost:8080/employees
+GET http://localhost:8080/api/employees
 
 ### Get Employee by ID
 @employeeId = 1
-GET http://localhost:8080/employees/{{employeeId}}
+GET http://localhost:8080/api/employees/{{employeeId}}
 
 ### Get Employee by ID - Not Found
 employeeId = 999
 GET http://localhost:8080/employees/{{employeeId}}
 
-###
+### Create New Employee
+POST http://localhost:8080/api/employees
+Content-Type: application/json
+{
+  "name": "John Doe"
+}
+
+### Update Employee
+employeeId = 1
+POST http://localhost:8080/api/employees/{{employeeId}}
+Content-Type: application/json
+{
+    "id": employeeId
+  "name": "John Doe"
+}
+
+### Delete Employee
+employeeId = 1
+DELETE http://localhost:8080/api/employees/{{employeeId}}
