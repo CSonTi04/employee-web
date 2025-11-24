@@ -27,19 +27,27 @@ public class EmployeeController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    //Created-nél szükséges a helyes URI visszaadása
     @PostMapping
     public Mono<ResponseEntity<EmployeeDto>> createEmployee(
             @RequestBody Mono<EmployeeDto> employeeDto,
             UriComponentsBuilder uriComponentsBuilder
-            ) {
+    ) {
         return employeeService
                 .save(employeeDto)
                 .map(e -> ResponseEntity.created(uriComponentsBuilder.path("api/employees/{id}").buildAndExpand(e.id()).toUri()).body(e));
     }
 
     @PutMapping("/{id}")
-    public Mono<EmployeeDto> createEmployee(@PathVariable Long id,@RequestBody Mono<EmployeeDto> employeeDto) {
-        return employeeService.save(employeeDto);
+    public Mono<ResponseEntity<EmployeeDto>> createEmployee(@PathVariable Long id, @RequestBody Mono<EmployeeDto> employeeDto) {
+        return employeeDto
+                .filter(e -> e.id() != null && e.id().equals(id))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Employee with id " + id + " not found")))
+                .flatMap(
+                        e -> employeeService.save(employeeDto)
+                )
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
